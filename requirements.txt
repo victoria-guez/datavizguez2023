@@ -1,5 +1,5 @@
-python==3.10.2
-matplotlib==3.7.2
+python
+matplotlib
 os
 streamlit
 pandas
