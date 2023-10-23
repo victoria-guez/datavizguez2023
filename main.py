@@ -1,4 +1,4 @@
-# streamlit run C:\Users\33781\Desktop\_EFREI\_M1\python\labdataviz\main.py [ARGUMENTS]
+# streamlit run C:\Users\33781\Desktop\datavizguez2023\main.py [ARGUMENTS]
 
 import os
 import streamlit as st
@@ -446,99 +446,119 @@ graph6.update_geos(
 # ________________________________________________GRAPH7___________________________________________________
 
 PAYS = df.dropna(subset=['PAYS_N'])
-graph7 = px.pie(PAYS[PAYS['PAYS_N'].notna() & ~PAYS['PAYS_N'].isin(['MARTINIQUE', 'GUADELOUPE', 'LA REUNION'])],
-                names='PAYS_N')
 
+top_countries = PAYS[~PAYS['PAYS_N'].isin(['MARTINIQUE', 'GUADELOUPE', 'LA REUNION'])]['PAYS_N'].value_counts().nlargest(12).index
+PAYS['PAYS_N'] = PAYS['PAYS_N'].apply(lambda x: x if x in top_countries else 'Autre')
+
+graph7 = px.pie(PAYS, names='PAYS_N')
 
 # ________________________________________________AFFICHAGE STREAMLIT_________________________________________
 
 # Mise en place d'un menu
-Menu = st.sidebar.selectbox("Menu", ["Présentation de l'étude", "Graph n°1", "Graph n°2", "Graph n°3", "Graph n°4", "Graph n°5 et 5bis", "Graph n°6", "Graph n°7", "Graph n°8"])
+st.sidebar.title("Menu")
+st.sidebar.write("#dataviz2023")
+st.sidebar.markdown("""
+[Présentation : ](#presentation)\n
+[Graph n°1 : répartition selon l'age et le sexe ](#graph1)\n
+[Graph n°2 : répartition des naissances et décès selon la région ](#graph2)\n
+[Carte de france : répartition des décès ](#graph3)\n
+[Graph n°4 : les Français reste il dans la même région ? ](#graph4)\n
+[Graph n°5 : évolution des prénoms à travers les âges ](#graph5)\n
+[Graph n°6 : évolution du nombre de prénoms ](#graph6)\n
+[Graph n°7 : où sont nés ceux qui viennent en France ? ](#graph7)\n
+""")
 
-if Menu == "Présentation de l'étude":
+st.sidebar.write("Par Victoria Guez")
 
 # initialisation de streamlit et test en display
+st.markdown('<a id="presentation"></a>', unsafe_allow_html=True)
+st.title("Etude de l'évolution des habitudes et des moeurs des Français")
+st.header("Ou plutôt, où fait-il bon de naître et de mourir en France ?")
 
-    st.title("Etude de l'évolution des habitudes")
-# st.header("Ceci est un en-tête")
-    st.subheader("Cette étude est basée sur 147 000 décès en France en 2023. \n "
+
+st.write("Cette étude est basée sur 147 000 décès en France en 2023. \n "
              "nous avons pour chacun les informations suivantes :\n "
              "- date de naissance \n"
              "- date de mort\n"
              "- code postale du lieu de naissance \n"
-             "- code postale du lieu de naissance\n"
+             "- code postale du lieu de décès\n"
              "- Nom et Prénoms\n"
              "- sexe\n"
              "- ville de naissance\n"
              "- pays si différent de la France\n ")
-    st.write("C'est grâce à ces éléments que vous pouvez découvrir aujourd'hui notre études :"
+st.write("C'est grâce à ces éléments que vous pouvez découvrir aujourd'hui notre études :"
          " Comment ont évolué les vies des Français depuis 100 ans  ?")
 
 # display des différents graph :
-elif Menu == "Graph n°1":
-    st.header("Ce graphique présente la répartition des décès par tranche d'âge en fonction du sexe")
-    st.pyplot(graph1)
+st.markdown('<a id="graph1"></a>', unsafe_allow_html=True)
+st.header("Ce graphique présente la répartition des décès par tranche d'âge en fonction du sexe")
+st.pyplot(graph1)
 
-elif Menu =="Graph n°2":
-    st.header("Ce graphique représente la répartition des décès et des naissances en fonction des régions ")
-    st.plotly_chart(graph2)
+st.markdown('<a id="graph2"></a>', unsafe_allow_html=True)
+st.header("Ce graphique représente la répartition des décès et des naissances en fonction des régions ")
+st.plotly_chart(graph2)
 
-elif Menu =="Graph n°3":
-    st.header("Ce graphique représente  le nombre de prénom selon l'âge ")
-    st.plotly_chart(graph3)
+st.markdown('<a id="graph6"></a>', unsafe_allow_html=True)
 
-elif Menu =="Graph n°4":
-    st.header("Ces graphiques repésentent la part de personnes étant nés et décédés dans la même région ")
-    st.write("le premier graphique repésente la part générale puis les 9 petits la part pour chacune des tranches d'âge")
-    st.plotly_chart(graph4)
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.plotly_chart(graph41, use_container_width=True)
-        pass
+st.header("Cette carte de France montre la répartition des décès en fonction des régions")
+st.write("le focus étant mis sur Paris il suffit d'appuyer sur zoom pour n'avoir que la france dans le cadre ")
+st.plotly_chart(graph6)
 
-    with col2:
-         st.plotly_chart(graph42, use_container_width=True)
-         pass
 
-    with col3:
-        st.plotly_chart(graph43, use_container_width=True)
-        pass
 
-    with col1:
-        st.plotly_chart(graph44, use_container_width=True)
-        pass
+st.markdown('<a id="graph4"></a>', unsafe_allow_html=True)
+st.header("Ces graphiques repésentent la part de personnes étant nés et décédés dans la même région ")
+st.write("le premier graphique repésente la part générale puis les 9 petits la part pour chacune des tranches d'âge")
+st.plotly_chart(graph4)
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.plotly_chart(graph41, use_container_width=True)
+    pass
 
-    with col2:
-        st.plotly_chart(graph45, use_container_width=True)
-        pass
+with col2:
+    st.plotly_chart(graph42, use_container_width=True)
+    pass
 
-    with col3:
-        st.plotly_chart(graph46, use_container_width=True)
-        pass
-    with col1:
-        st.plotly_chart(graph47, use_container_width=True)
-        pass
+with col3:
+    st.plotly_chart(graph43, use_container_width=True)
+    pass
 
-    with col2:
-        st.plotly_chart(graph48, use_container_width=True)
-        pass
+with col1:
+    st.plotly_chart(graph44, use_container_width=True)
+    pass
 
-    with col3:
-        st.plotly_chart(graph49, use_container_width=True)
-        pass
+with col2:
+    st.plotly_chart(graph45, use_container_width=True)
+    pass
 
-elif Menu =="Graph n°5 et 5bis":
-    st.header("Ces graphiques repésentent les prénoms les plus donnés selon les années")
-    st.write("nous avons d'abord selectionné le prénom le plus récurrent pour chaque tranche d'âge puis sa répartition entre 1900 et 2023"
+with col3:
+    st.plotly_chart(graph46, use_container_width=True)
+    pass
+with col1:
+    st.plotly_chart(graph47, use_container_width=True)
+    pass
+
+with col2:
+    st.plotly_chart(graph48, use_container_width=True)
+    pass
+
+with col3:
+    st.plotly_chart(graph49, use_container_width=True)
+    pass
+
+st.markdown('<a id="graph5"></a>', unsafe_allow_html=True)
+
+st.header("Ces graphiques repésentent les prénoms les plus donnés selon les années")
+st.write("nous avons d'abord selectionné le prénom le plus récurrent pour chaque tranche d'âge puis sa répartition entre 1900 et 2023"
              "\n nous avons également fais un zoom entre 1970 et 2023 pour plus de clarté dans les résultats")
-    st.plotly_chart(graph51)
-    st.plotly_chart(graph52)
+st.plotly_chart(graph51)
+st.plotly_chart(graph52)
 
-elif Menu == "Graph n°6":
-    st.header("Cette carte de France montre la répartition des décès en fonction des régions")
-    st.write("le focus étant mis sur Paris il suffit d'appuyer sur zoom pour n'avoir que la france dans le cadre ")
-    st.plotly_chart(graph6)
+st.markdown('<a id="graph3"></a>', unsafe_allow_html=True)
+st.header("Ce graphique représente  le nombre de prénom selon l'âge ")
+st.plotly_chart(graph3)
 
-elif Menu =="Graph n°7":
-    st.header("Ce diagramme en cercle montre les pays d'origine des personnes décédés en France mais né hors de France")
-    st.plotly_chart(graph7)
+st.markdown('<a id="graph7"></a>', unsafe_allow_html=True)
+st.header("Ce diagramme en cercle montre les pays d'origine des personnes décédées en France mais né hors de France")
+st.plotly_chart(graph7)
+
